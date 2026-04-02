@@ -4,6 +4,66 @@ Ansible CrowdStrike Falcon Collection Release Notes
 
 .. contents:: Topics
 
+v4.11.1
+=======
+
+Release Summary
+---------------
+
+| Release Date: 2026-03-09
+| `Release Notes: <https://github.com/CrowdStrike/ansible_collection_falcon/releases/tag/4.11.1>`__
+
+Bugfixes
+--------
+
+- falcon_install role - Fix ``ansible_facts['machine']`` undefined error on Windows hosts when using Sensor Update Policy (https://github.com/CrowdStrike/ansible_collection_falcon/issues/680)
+- falcon_install role - Fix incorrect falcon_os_version for Amazon Linux 2 arm64 by setting the API-expected value '2 - arm64' for aarch64 architecture (https://github.com/CrowdStrike/ansible_collection_falcon/issues/682).
+- falcon_install role - Fix malformed API filter when ``falcon_sensor_version`` is passed via extra args (https://github.com/CrowdStrike/ansible_collection_falcon/issues/679)
+
+v4.11.0
+=======
+
+Release Summary
+---------------
+
+| Release Date: 2026-01-29
+| `Release Notes: <https://github.com/CrowdStrike/ansible_collection_falcon/releases/tag/4.11.0>`__
+
+Minor Changes
+-------------
+
+- falcon_configure role - Add support for CsSensorSettings utility on Windows sensor 6.42+ to configure grouping tags post-installation (https://github.com/CrowdStrike/ansible_collection_falcon/issues/304)
+
+Bugfixes
+--------
+
+- sensor_update_builds_info module - Sanitize sensor_version fields to remove LTS suffix that causes sensor download API failures (https://github.com/CrowdStrike/falcon-scripts/issues/460).
+- sensor_update_policy_info module - Fix NoneType error when policy variants field is null (https://github.com/CrowdStrike/falcon-scripts/issues/460).
+- sensor_update_policy_info module - Sanitize sensor_version fields to remove LTS suffix that causes sensor download API failures (https://github.com/CrowdStrike/falcon-scripts/issues/460).
+
+v4.10.1
+=======
+
+Release Summary
+---------------
+
+| Release Date: 2026-01-20
+| `Release Notes: <https://github.com/CrowdStrike/ansible_collection_falcon/releases/tag/4.10.1>`__
+
+Minor Changes
+-------------
+
+- lookup plugins - Add us-gov-2 to valid cloud regions
+- lookup plugins - Refactor shared authentication logic into plugin_utils/falconpy_utils.py for DRY compliance across host_ids, maintenance_token, and fctl_child_cids plugins
+
+Bugfixes
+--------
+
+- falcon_install role - Fix type comparison error when falcon_sensor_version_decrement is passed as a string (https://github.com/CrowdStrike/ansible_collection_falcon/issues/655)
+- host_contain module - Fix TypeError when calling handle_return_errors with wrong argument type (https://github.com/CrowdStrike/ansible_collection_falcon/issues/666).
+- host_hide module - Fix TypeError when calling handle_return_errors with wrong argument type (https://github.com/CrowdStrike/ansible_collection_falcon/issues/666).
+- lookup plugins - Add early authentication validation to provide clear error messages when OAuth credentials are invalid, instead of failing on subsequent API calls (https://github.com/CrowdStrike/ansible_collection_falcon/issues/664)
+
 v4.10.0
 =======
 

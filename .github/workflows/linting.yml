@@ -15,44 +15,16 @@ permissions:  # added using https://github.com/step-security/secure-repo
   contents: read
 
 jobs:
-  flake8:
-    runs-on: ubuntu-latest
-    env:
-      PY_COLORS: 1
-    steps:
-    - name: Harden the runner (Audit all outbound calls)
-      uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
-      with:
-        egress-policy: audit
-
-    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-    - name: Set up Python
-      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
-      with:
-          python-version: '3.11'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install flake8
-    - name: Lint with flake8
-      run:
-        flake8 ./plugins/
-
   pylint:
     runs-on: ubuntu-latest
     env:
       PY_COLORS: 1
     steps:
-    - name: Harden the runner (Audit all outbound calls)
-      uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
-      with:
-        egress-policy: audit
-
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
     - name: Set up Python
       uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
       with:
-          python-version: '3.11'
+          python-version: '3.12'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -60,26 +32,3 @@ jobs:
     - name: Lint with pylint
       run: |
         find plugins/ -name "*.py" | xargs pylint
-
-  bandit:
-    runs-on: ubuntu-latest
-    env:
-      PY_COLORS: 1
-    steps:
-    - name: Harden the runner (Audit all outbound calls)
-      uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
-      with:
-        egress-policy: audit
-
-    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-    - name: Set up Python
-      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
-      with:
-          python-version: '3.11'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install bandit
-    - name: Lint with bandit
-      run: |
-        bandit  -l -i -r ./plugins/

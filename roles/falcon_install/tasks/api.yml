@@ -27,21 +27,21 @@
           - falcon_sensor_update_policy_info.policies[0].settings.variants[0] is defined
         fail_msg: "No Falcon Sensor Update Policy with name: {{ falcon_sensor_update_policy_name }} and enabled for aarch64 was found!"
         success_msg: "Falcon Sensor Update Policy {{ falcon_sensor_update_policy_name }} found for aarch64 architecture."
-      when: ansible_facts['machine'] == "aarch64"
+      when: ansible_facts['machine'] | default('') == "aarch64"
 
     - name: "CrowdStrike Falcon | Get the Falcon Sensor version from Update Policy"
       ansible.builtin.set_fact:
         falcon_sensor_update_policy_package_version: "{{ falcon_sensor_update_policy_info.policies[0].settings.sensor_version }}"
-      when: ansible_facts['machine'] != "aarch64"
+      when: ansible_facts['machine'] | default('') != "aarch64"
 
     - name: "CrowdStrike Falcon | Get the Falcon Sensor version from Update Policy for aarch64 architecture"
       ansible.builtin.set_fact:
         falcon_sensor_update_policy_package_version: "{{ falcon_sensor_update_policy_info.policies[0].settings.variants[0].sensor_version }}"
-      when: ansible_facts['machine'] == "aarch64"
+      when: ansible_facts['machine'] | default('') == "aarch64"
 
-    - name: CrowdStrike Falcon | Override falcon_sensor_version with version from Sensor Update Policy
+    - name: CrowdStrike Falcon | Build falcon_sensor_version_filter from Sensor Update Policy
       ansible.builtin.set_fact:
-        falcon_sensor_version: "+version:'{{ falcon_sensor_update_policy_package_version }}'"
+        falcon_sensor_version_filter: "+version:'{{ falcon_sensor_update_policy_package_version }}'"
 
 - name: "CrowdStrike Falcon | Build API Sensor Query"
   ansible.builtin.set_fact:
@@ -49,7 +49,7 @@
       os:'{{ falcon_target_os }}'+
       os_version:'{{ falcon_os_version }}'{{
       falcon_os_arch | default('') }}{{
-      falcon_sensor_version | default('') }}
+      falcon_sensor_version_filter | default('') }}
 
 - name: CrowdStrike Falcon | Get list of filtered Falcon sensors
   crowdstrike.falcon.sensor_download_info:
@@ -69,13 +69,13 @@
 - name: CrowdStrike Falcon | Validate available sensor count > decrement (if applicable)
   ansible.builtin.assert:
     that:
-      - falcon_api_installer_list.installers | length > falcon_sensor_version_decrement
+      - falcon_api_installer_list.installers | length > falcon_sensor_version_decrement | int
     fail_msg: >-
       Not enough sensor versions available for the specified decrement value: N-{{ falcon_sensor_version_decrement }}.
       This may occur if your OS distribution/version is newly supported and fewer historical sensor versions exist.
   when:
     - falcon_sensor_version_decrement is defined
-    - falcon_sensor_version_decrement > 0
+    - falcon_sensor_version_decrement | int > 0
 
 - name: CrowdStrike Falcon | Ensure download path exists (local)
   ansible.builtin.file:
